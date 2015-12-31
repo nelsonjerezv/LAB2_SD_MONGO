@@ -29,11 +29,7 @@ public class InvertedIndex {
     
     static Mongo mongo = new Mongo("localhost",27017);
     
-    static DB db = mongo.getDB("test");
-    static DBCollection coleccion = db.getCollection("test");
-    static DBCollection index_db = db.getCollection("index");
-    
-    public  static ArrayList<String> palabras;
+    static ArrayList<String> palabras = ProcesaXML.palabras;
 
     public static List<String> stopwords;
 
@@ -121,7 +117,7 @@ public class InvertedIndex {
             list.add(words.get(i));
         }
         inQuery.put("key", new BasicDBObject("$in", list));
-        DBCursor cursor = index_db.find(inQuery);
+        DBCursor cursor = LAB2_SD_MONGO.index_db.find(inQuery);
 
         while(cursor.hasNext()) {
             DBObject obj = cursor.next();
@@ -142,7 +138,6 @@ public class InvertedIndex {
             
             String xtr = asd.replaceAll("[a-zA-Z\\[\\]\\{\\}\":, ]", " ");
             xtr = xtr.replaceAll("\\s+", " ");
-            //System.out.println("xtr: "+xtr);
             String[] items = xtr.split(" ");
             
             int[] results = new int[items.length];
@@ -159,7 +154,7 @@ public class InvertedIndex {
             }
             
             for (int i = 0; i < count; i++) {                   
-                DBCursor cur = coleccion.find();
+                DBCursor cur = LAB2_SD_MONGO.coleccion.find();
                 cur.skip((int) response.get(i).get(0));
                 cur.next();
                 DBObject doc= cur.curr();
@@ -195,7 +190,7 @@ public class InvertedIndex {
         System.out.print("Busqueda: " + words + "\nResultados: ");
         for (Tuple3 f : respuesta) {
             
-            DBCursor cur = coleccion.find();
+            DBCursor cur = LAB2_SD_MONGO.coleccion.find();
             cur.skip(f.fileno);
             cur.next();
             DBObject doc= cur.curr();
@@ -259,9 +254,9 @@ public class InvertedIndex {
 
     public static void indexar(InvertedIndex idx) throws IOException {
         
-        DBCursor cursor_remove = index_db.find();
+        DBCursor cursor_remove = LAB2_SD_MONGO.index_db.find();
 	while (cursor_remove.hasNext()) {
-		index_db.remove(cursor_remove.next());
+            LAB2_SD_MONGO.index_db.remove(cursor_remove.next());
 	}
         
         try (FileReader fr = new FileReader("stop-words-spanish.txt")) {
@@ -281,7 +276,7 @@ public class InvertedIndex {
 
         stopwords = palabras;
         DBCursor cursor;
-        cursor = coleccion.find();
+        cursor = LAB2_SD_MONGO.coleccion.find();
 
         while( cursor.hasNext() ){
             DBObject documento = cursor.next();
@@ -314,7 +309,7 @@ public class InvertedIndex {
             // ingresamos los valores
             document.put("values", contenido);
             // insertamos al indice
-            index_db.insert(document);
+            LAB2_SD_MONGO.index_db.insert(document);
         }
         
     }

@@ -21,19 +21,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;  
 import org.xml.sax.helpers.XMLReaderFactory;  
   
-/** 
- * Clase que procesa un XML de ejemplo mediante el handler SAX ManejadorEjemplo 
- *  
- * @author Xela 
- * 
- */  
 public class ProcesaXML {  
     
     public static ArrayList<String> palabras;
   
-    public static void ProcesaXML() throws FileNotFoundException, IOException, SAXException {  
+    public static void ProcesaXML(String stopwords, String XML) throws FileNotFoundException, IOException, SAXException {  
         
-        try (FileReader fr = new FileReader("stop-words-spanish.txt")) {
+        try (FileReader fr = new FileReader(stopwords)) {
             if(fr == null){
                 System.out.println("Archivo erroneo");
                 System.exit(1);
@@ -49,13 +43,13 @@ public class ProcesaXML {
         }
         
           
-            // Creamos la factoria de parseadores por defecto  
-            XMLReader reader = XMLReaderFactory.createXMLReader();  
-            // Añadimos nuestro manejador al reader  
-            reader.setContentHandler(new ManejadorEjemplo());           
-            // Procesamos el xml de ejemplo  
-            //reader.parse(new InputSource(new FileInputStream("C:\\Users\\Nelson\\Desktop\\sub.xml")));  
-            reader.parse(new InputSource(new FileInputStream("C:\\Users\\Nelson\\Desktop\\sub.xml")));  
+        // Creamos la factoria de parseadores por defecto  
+        XMLReader reader = XMLReaderFactory.createXMLReader();  
+        // Añadimos nuestro manejador al reader  
+        reader.setContentHandler(new ManejadorEjemplo());           
+        // Procesamos el xml de ejemplo  
+        //reader.parse(new InputSource(new FileInputStream("C:\\Users\\Nelson\\Desktop\\sub.xml")));  
+        reader.parse(new InputSource(new FileInputStream(XML)));  
         
   
    }  

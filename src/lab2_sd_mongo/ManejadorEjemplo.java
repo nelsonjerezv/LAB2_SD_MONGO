@@ -21,10 +21,10 @@ public class ManejadorEjemplo extends DefaultHandler{
     private String cadena = "";
     private String titulo = "";
     
-    Mongo mongo = new Mongo("localhost",27017);
+    Mongo mongo = new Mongo("localhost",LAB2_SD_MONGO.puerto_mongoDB);
     
-    DB db = mongo.getDB("test");
-    DBCollection coleccion = db.getCollection("test");
+    DB db = mongo.getDB(LAB2_SD_MONGO.nombre_BD);
+    DBCollection coleccion = db.getCollection(LAB2_SD_MONGO.nombre_coleccion_DB);
 
    @Override  
    public void startDocument() throws SAXException {  
@@ -51,17 +51,16 @@ public class ManejadorEjemplo extends DefaultHandler{
    }  
   
    @Override  
-   public void endElement(String uri, String localName, String name)  
-         throws SAXException {  
+   public void endElement(String uri, String localName, String name) throws SAXException {  
+       
        if(localName.equals("title")){
            titulo = valor;
-//           System.out.println(titulo);
        }
+       
        if (localName.equals("page")){
            try {
                titulo = filtroStopWords.filtrar(titulo);
                valor = filtroStopWords.filtrarSW(valor);
-               //System.out.println("*********************************************************************************");
                System.out.println(titulo);
                System.out.println(valor);
                               
@@ -83,8 +82,5 @@ public class ManejadorEjemplo extends DefaultHandler{
        if (localName.equals("format")){
            valor = "";
         }
-
-
    }  
-  
 }
