@@ -9,6 +9,7 @@ package lab2_sd_mongo;
  *
  * @author Rodrigo
  */
+import com.mongodb.DBCursor;
 import java.io.BufferedReader;
 import java.io.FileInputStream;  
 import java.io.FileNotFoundException;
@@ -27,6 +28,12 @@ public class ProcesaXML {
   
     public static void ProcesaXML(String stopwords, String XML) throws FileNotFoundException, IOException, SAXException {  
         
+        
+        DBCursor cursor_removeDB = LAB2_SD_MONGO.coleccion.find();
+	while (cursor_removeDB.hasNext()) {
+            LAB2_SD_MONGO.coleccion.remove(cursor_removeDB.next());
+	} 
+        
         try (FileReader fr = new FileReader(stopwords)) {
             if(fr == null){
                 System.out.println("Archivo erroneo");
@@ -42,7 +49,6 @@ public class ProcesaXML {
             }
         }
         
-          
         // Creamos la factoria de parseadores por defecto  
         XMLReader reader = XMLReaderFactory.createXMLReader();  
         // Añadimos nuestro manejador al reader  
@@ -50,8 +56,5 @@ public class ProcesaXML {
         // Procesamos el xml de ejemplo  
         //reader.parse(new InputSource(new FileInputStream("C:\\Users\\Nelson\\Desktop\\sub.xml")));  
         reader.parse(new InputSource(new FileInputStream(XML)));  
-        
-  
    }  
-  
 }  

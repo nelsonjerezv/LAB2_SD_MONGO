@@ -7,11 +7,13 @@ package lab2_sd_mongo;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.Mongo;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import static lab2_sd_mongo.InvertedIndex.mongo;
+import java.util.ArrayList;
+//import static lab2_sd_mongo.InvertedIndex.mongo;
 import org.xml.sax.SAXException;
 
 /**
@@ -29,7 +31,10 @@ public class LAB2_SD_MONGO {
     
     public static DB db;
     public static DBCollection coleccion;
+    public static DBCollection test;
     public static DBCollection index_db;
+    public static DBCollection index_part[];
+    public static Mongo mongo;
     public static String parametro;
     public static String ruta_XML = null;
     public static String nombre_BD = null;
@@ -40,6 +45,8 @@ public class LAB2_SD_MONGO {
     public static int counter = 0;
     public static int indexar = 0;
     public static int cargar_BD = 0;
+    public static int particiones = 0;
+    public static DBCollection shard;
     
     public static void main(String[] args) throws IOException, FileNotFoundException, SAXException {
         // Lectura de parametros
@@ -87,6 +94,10 @@ public class LAB2_SD_MONGO {
                         archivo_stopwords = parametro;
                         System.out.println("parametro " + counter + ": " + archivo_stopwords);
                         break;
+                    case 8:
+                        particiones = Integer.parseInt(parametro);
+                        System.out.println("parametro " + counter + ": " + particiones);
+                        break;
                     default:
                         System.out.println("parametro " + counter + ": " + parametro);
                         break;
@@ -95,12 +106,44 @@ public class LAB2_SD_MONGO {
             }
         }
         
+        mongo = new Mongo("localhost",puerto_mongoDB);
         db = mongo.getDB(nombre_BD);
-        coleccion = db.getCollection(nombre_coleccion_DB);
-        index_db = db.getCollection(nombre_coleccion_DB_Index);
+        test = db.createCollection("asdasdasd", null);
+        if (!db.collectionExists("test")) {
+            System.out.println("asd");
+            coleccion = db.createCollection(nombre_coleccion_DB, null);
+
+        }else{
+            coleccion = db.getCollection("test");
+        }
+        if (!db.collectionExists("index")) {
+            System.out.println("qwe");
+            index_db = db.createCollection(nombre_coleccion_DB_Index,null);
+        }else{
+            index_db = db.getCollection("index");
+        }
+        //**********************************************************
         
+        
+        //**********************************************************
+        
+        
+        System.out.println("Procesamos...");
         ProcesaXML.ProcesaXML(archivo_stopwords, ruta_XML);
-        testIndex.testIndex();
+        
+        System.out.println("\nXML Index size: " + LAB2_SD_MONGO.index_db.count() + 
+                          " Db size: " + LAB2_SD_MONGO.coleccion.count() + "\n");
+        
+        System.out.println("DB creada en Mongo, lista para indexar");        
+        
+        InvertedIndex.indexar();
+        
+        System.out.println("\nXML Index size: " + LAB2_SD_MONGO.index_db.count() + 
+                          " Db size: " + LAB2_SD_MONGO.coleccion.count() + "\n");
+        
+        System.out.println("Index creado en Mongo, listo para ser usado");
+//        System.out.println("id mide: " + "argentina".length());
+//        ArrayList<String> asd = testIndex.testIndex("argentina");
     }
     
 }
