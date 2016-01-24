@@ -41,7 +41,8 @@ public class filtroStopWords {
         
         // eliminamos las stopwords, los espacios aseguran no eliminar parte de palabras
         for (int i = 0; i < ProcesaXML.palabras.size(); i++) {
-            cadena = cadena.replace( (" " + ProcesaXML.palabras.get(i) + " " ), " ");
+            String aux = "\\b"+ProcesaXML.palabras.get(i)+"\\b";            
+            cadena = cadena.replaceAll( aux , "");
         }
         
         return cadena;
